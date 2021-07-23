@@ -1,0 +1,81 @@
+Models:
+  hrnet:
+    dataset:
+      coco:
+        configs:
+          1:
+          - hrnet_w32_coco_256x192_fp16_dynamic.py
+          - hrnet_w32_coco_256x192_fp16_dynamic-290efc2e_20210430.pth
+          2:
+          - hrnet_w32_coco_256x192.py
+          - hrnet_w32_coco_256x192-c78dce93_20200708.pth
+          3:
+          - hrnet_w32_coco_384x288.py
+          - hrnet_w32_coco_384x288-d9f0d786_20200708.pth
+          4:
+          - hrnet_w48_coco_256x192.py
+          - hrnet_w48_coco_256x192-b9e0b3ab_20200708.pth
+          5:
+          - /root/mmpose/configs/body/2d_kpt_sview_rgb_img/topdown_heatmap/coco/hrnet_w48_coco_384x288.py
+          - hrnet_w48_coco_384x288-314c8528_20200708.pth
+      mpii:
+        configs:
+          1:
+          - hrnet_w32_mpii_256x256.py
+          - hrnet_w32_mpii_256x256-6c4f923f_20200812.pth
+          2:
+          - hrnet_w48_mpii_256x256.py
+          - hrnet_w48_mpii_256x256-92cab7bd_20200812.pth
+  hourglass:
+    dataset:
+      coco:
+        configs:
+          1:
+          - hourglass52_coco_256x256.py
+          - hourglass52_coco_256x256-4ec713ba_20200709.pth
+          2:
+          - hourglass52_coco_384x384.py
+          - hourglass52_coco_384x384-be91ba2b_20200812.pth
+      mpii:
+        configs:
+          1: 
+          - hourglass52_mpii_256x256.py
+          - hourglass52_mpii_256x256-ae358435_20200812.pth
+          2:
+          - hourglass52_mpii_384x384.py
+          - hourglass52_mpii_384x384-04090bc3_20200812.pth
+  higherhrnet:
+    dataset:
+      coco:
+        configs:
+          1:
+          - higher_hrnet32_coco_512x512.py
+          - higher_hrnet32_coco_512x512-8ae85183_20200713.pth
+          2: 
+          - higher_hrnet32_coco_640x640.py
+          - higher_hrnet32_coco_640x640-a22fe938_20200712.pth
+          3:
+          - higher_hrnet48_coco_512x512.py
+          - higher_hrnet48_coco_512x512-60fedcbc_20200712.pth
+          4:
+          - higher_hrnet48_coco_640x640.py
+          - 
+  rsn:
+    dataset:
+      coco:
+        configs:
+          1:
+          - rsn18_coco_256x192.py
+          - rsn18_coco_256x192-72f4b4a7_20201127.pth
+          2:
+          - rsn50_coco_256x192.py
+          - rsn50_coco_256x192-72ffe709_20201127.pth
+          3:
+          - 2xrsn50_coco_256x192.py
+          - 2xrsn50_coco_256x192-50648f0e_20201127.pth
+          4:
+          - 3xrsn50_coco_256x192.py
+          - 3xrsn50_coco_256x192-58f57a68_20201127.pth
+          
+           
+          
