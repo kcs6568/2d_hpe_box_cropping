@@ -166,22 +166,7 @@ def inference_detector(model, imgs):
         return results, det_time_sec # type: list
 
 
-def _get_bboxes_in_multi_images(det_results, cat_id):
-    bboxes_per_image = []
-    for det_img in det_results:
-        bboxes_per_image.append(det_img[cat_id - 1])
-
-    return bboxes_per_image
-
-
-def box_crop(bbox, h_rate, w_rate):
-    box_h = bbox[3] - bbox[1]
-    box_w = bbox[2] - bbox[0]
-
-    box_crop_h = box_h / h_rate
-    box_crop_w = box_w / w_rate
-        
-
+      
 def _get_cropped_box(human_bboxes, h_rate, w_rate):
     full_box_results = []
     crop_box_results = []
@@ -225,6 +210,14 @@ def _get_cropped_box(human_bboxes, h_rate, w_rate):
     return crop_box_results
 
 
+def _get_bboxes_in_multi_images(det_results, cat_id):
+    bboxes_per_image = []
+    for det_img in det_results:
+        bboxes_per_image.append(det_img[cat_id - 1])
+
+    return bboxes_per_image
+
+
 def _get_bboxes_in_single_image(human_bboxes):
     person_results = []
     
@@ -234,20 +227,6 @@ def _get_bboxes_in_single_image(human_bboxes):
         person_results.append(person)
 
     return person_results
-
-
-# def _set_bboxes_to_dict(human_bboxes):
-#     person_results = []
-
-#     for bboxes_per_img in human_bboxes:
-#         tmp_list = []
-#         for bbox in bboxes_per_img:
-#             person = {}
-#             person['bbox'] = bbox
-#             tmp_list.append(person)
-#         person_results.append(tmp_list)
-
-#     return person_results
 
 
 def process_mmdet_results(
@@ -270,29 +249,15 @@ def process_mmdet_results(
         det_results = mmdet_results
 
     human_bboxes = det_results[cat_id - 1]
-    
-    start = torch.cuda.Event(enable_timing=True)
-    end = torch.cuda.Event(enable_timing=True)
 
     if is_crop:
-        start.record()
         crop_box_results = _get_cropped_box(
             human_bboxes, h_rate, w_rate)
-        end.record()
-
-        torch.cuda.synchronize()                   
-        det_time_sec = start.elapsed_time(end)
-
         
         return crop_box_results
         
     else:
-        start.record()
         person_results = _get_bboxes_in_single_image(human_bboxes)
-        end.record()
-        
-        torch.cuda.synchronize()                   
-        det_time_sec = start.elapsed_time(end)
         
         return person_results
 
@@ -457,14 +422,8 @@ def show_result(img,
 def run_detection(detector, img):
     start = torch.cuda.Event(enable_timing=True)
     end = torch.cuda.Event(enable_timing=True)
-
-    start.record()
     mmdet_results, det_infer_time = inference_detector(detector, img)
-    end.record()
 
-    torch.cuda.synchronize()                   
-    det_time_sec = start.elapsed_time(end)
-
-    return mmdet_results, det_time_sec, det_infer_time
+    return mmdet_results, det_infer_time
 
 

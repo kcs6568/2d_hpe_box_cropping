@@ -524,8 +524,7 @@ def _inference_single_pose_model(model,
         raise NotImplementedError()
 
     batch_data = []
-    # bbox, resizing_scale: np.array
-    for bbox, resizing_scale in zip(bboxes, bboxes_resizing):
+    for bbox in bboxes:
         center, scale = _box2cs(cfg, bbox)
 
         # prepare data
@@ -550,7 +549,6 @@ def _inference_single_pose_model(model,
             0,
             'ann_info': {
                 'image_size': np.array(cfg.data_cfg['image_size']),
-                # 'image_size': resizing_scale,
                 'num_joints': cfg.data_cfg['num_joints'],
                 'flip_pairs': flip_pairs
             }
@@ -870,10 +868,7 @@ def run_human_pose_estimation(
     end.record()
     torch.cuda.synchronize()
     
-    pose_time_sec =start.elapsed_time(end)
-
-
-
-    return pose_results, heatmap, pose_time_sec, pose_infer_time
+ 
+    return pose_results, heatmap, pose_infer_time
 
 

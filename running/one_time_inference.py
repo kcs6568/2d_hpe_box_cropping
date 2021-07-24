@@ -126,7 +126,7 @@ def main():
         for idx, img in enumerate(img_data):
             try:
                 # detection
-                det_results, det_time_sec, det_infer_time = run_detection(detection_model, img)
+                det_results, det_infer_time = run_detection(detection_model, img)
 
                 # extraction cropped human bbox
                 cropped_human_boxes = process_mmdet_results(
@@ -136,7 +136,7 @@ def main():
                     args().w_crop)
 
                 # pose estimation
-                pose_results, heatmap, pose_time_sec, pose_infer_time = run_human_pose_estimation(
+                pose_results, heatmap, pose_infer_time = run_human_pose_estimation(
                                 pose_model,
                                 img,
                                 cropped_human_boxes,
