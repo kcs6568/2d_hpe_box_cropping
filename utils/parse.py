@@ -96,6 +96,7 @@ class InferenceParser():
         parser.add_argument('model', help='used model')
         parser.add_argument('cfgnum', type=int)
         parser.add_argument('det', type=str, default=None, help='choice detector the one or all')
+        parser.add_argument('det_cfgnum', type=int, default=1)
         parser.add_argument('dataset', type=str)
         parser.add_argument('case', type=str)
         parser.add_argument('img', type=str)

@@ -124,7 +124,7 @@ def get_base_pose_info(cfg_path, model, dataset, cfgnum):
     
     return cfg, ckpt
 
-def get_one_det_info(det_cfg_path, detector, det_num=1):
+def get_det_info(det_cfg_path, detector, det_num=1):
     data = load_yaml(det_cfg_path)
             
     cfg, ckpt = data['Models'][detector.lower()]['dataset']['coco']['configs'][det_num]

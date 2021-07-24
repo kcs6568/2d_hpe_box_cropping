@@ -48,17 +48,6 @@ class DetectionLoadImage:
         return results
 
 
-def init_multi_detector(det_info, device='cuda:0'):
-    model_dict = dict()
-
-    for task, data in det_info.items():
-        model_dict[task] = init_detector(
-            data[0], data[1], device=device
-        )
-
-    return model_dict
-
-
 def init_detector(config, checkpoint=None, device='cuda:0', cfg_options=None):
     """Initialize a detector from config file.
 

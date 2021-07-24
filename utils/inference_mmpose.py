@@ -63,7 +63,7 @@ class PoseLoadImage:
 
 
 
-def init_pose_model(config, checkpoint, crop_boxes, apply_speedup=True, device='cuda:0'):
+def init_pose_model(config, checkpoint=None, apply_speedup=True, device='cuda:0'):
     """Initialize a pose model from config file.
 
     Args:
@@ -81,12 +81,6 @@ def init_pose_model(config, checkpoint, crop_boxes, apply_speedup=True, device='
         raise TypeError('config must be a filename or Config object, '
                         f'but got {type(config)}')
     config.model.pretrained = None
-    # config.data_cfg['image_size'] = [
-    #     int(config.data_cfg['image_size'][0]/crop_boxes),
-    #     int(config.data_cfg['image_size'][1]/crop_boxes)
-    # ]
-    
-    # print(config.data_cfg['image_size'])
     
     if apply_speedup:
         config.model.test_cfg['flip_test'] = False
@@ -95,7 +89,6 @@ def init_pose_model(config, checkpoint, crop_boxes, apply_speedup=True, device='
     model = build_posenet(config.model)
     if checkpoint is not None:
         # load model checkpoint
-        
         load_checkpoint(model, checkpoint, map_location=device)
     # save the config in the model for convenience
     model.cfg = config

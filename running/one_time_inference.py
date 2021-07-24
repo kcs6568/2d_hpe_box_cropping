@@ -37,50 +37,23 @@ from cskim_custom.utils.warmup_gpus import WarmUpGPUs
 from cskim_custom.utils.fileio import *
 
 
-def create_info_dict(
-    mode,
-    idx,
-    img, # image path
-    det_infer_time,
-    pose_infer_time,
-    naming_info
-    ):
-    return {
-        'mode': mode,
-        'image_path': img,
-        'det_infer_time': det_infer_time,
-        'pose_infer_time': pose_infer_time,
-        'h_crop': naming_info[0],
-        'w_crop': naming_info[1],
-        'kpt_thr': naming_info[2],
-        'bbox_thr': naming_info[3]    
-    }
-
-
 def main():
     args = InferenceParser()
     args().device = 'cuda:' + args().device
     cfg_path = f'/root/mmpose/cskim_custom/models/cfg_list.yaml'
     
     pose_cfg, pose_ckpt = get_base_pose_info(cfg_path, args().model, args().dataset, args().cfgnum)
-    abs_pose_cfg, abs_pose_ckpt = make_base_path_for_pose(
-        args().model, 
-        args().dataset, 
-        pose_cfg, 
-        pose_ckpt)
-
-    print(f"Model Information: {abs_pose_cfg} / {abs_pose_ckpt}\n")
     
-    cfg = Config.fromfile(abs_pose_cfg) 
-    pose_cfg_name = osp.splitext(osp.basename(abs_pose_cfg))[0]
+    cfg = Config.fromfile(pose_cfg) 
+    pose_cfg_name = osp.splitext(osp.basename(pose_cfg))[0]
     
     crop_boxes = args().h_crop * args().w_crop
     pose_model = init_pose_model(
-        abs_pose_cfg, 
-        abs_pose_ckpt, 
-        crop_boxes,
+        pose_cfg, 
+        pose_ckpt,
         apply_speedup=args().speedup,
         device=args().device.lower())
+    
     if args().speedup:
         print("apply speedup")
     pose_model_type = pose_model.cfg.model.type
@@ -88,9 +61,6 @@ def main():
 
     case_num = check_case_len(args().case)
     cases = "case_" + case_num # case_00, case_01, ...
-
-    # yaml file path
-    base_dir = f"/root/volume/{args().infer_data}/infer_results/{args().model}/{pose_cfg_name}/(det model name)/results/"
     
     if osp.exists(args().img):
         img_data = get_image_list(args().img)
@@ -105,7 +75,6 @@ def main():
         print(img_data)
     print(f"Image Len: {len(img_data)}")
     
-
     # set cudnn_benchmark
     if cfg.get('cudnn_benchmark', False):
         torch.backends.cudnn.benchmark = True
@@ -148,19 +117,16 @@ def main():
         print("\n*****************************<Process Start>*****************************")
         
         det_yaml_path = f'/root/mmpose/cskim_custom/detectors/cfg_lists.yaml'
-        det_cfg, det_ckpt = get_one_det_info(
-            det_yaml_path, args().det, args().det_num) #format:: task:[cfg, ckpt]
+        det_cfg, det_ckpt = get_det_info(
+            det_yaml_path, args().det, args().det_cfgnum) #format:: task:[cfg, ckpt]
 
         detection_model = init_detector(
             det_cfg, det_ckpt, device=args().device.lower())
-
-        
 
         for idx, img in enumerate(img_data):
             try:
                 # detection
                 det_results, det_time_sec, det_infer_time = run_detection(detection_model, img)
-
 
                 # extraction cropped human bbox
                 cropped_human_boxes = process_mmdet_results(
@@ -221,8 +187,6 @@ def main():
                             naming_info=naming_info)
                 
             except ValueError as ex:
-                # print(f"The ValueError is occured at the {img_name_lists[idx]} image")
-
                 det_time_results.append(0)
                 pose_time_results.append(0)
                 error_idx_ordered_dict[idx] = {
@@ -234,6 +198,7 @@ def main():
                     'error_msg': str(ex)
                 }
         
+
     print("\nAll finished\n")
     print("*"*50); print()
     info_save_path = osp.join(result_save_path, 'result_info.json')
